@@ -45,12 +45,18 @@ Before using the script, you need to configure it by editing the `backup.conf` f
 1. **Clone this repository or download the script files**.
 
    ```bash
-   git clone https://github.com/jr0w3/Vaultwarden-Sqlite-Backup-script.git
+   git clone https://github.com/jr0w3/Vaultwarden-Sqlite-Backup-script.git && cd Vaultwarden-Sqlite-Backup-script/
    ```
 
 2. **Configure the `backup.conf` file with your specific settings**.
+   ```bash
+   nano backup.conf
+   ```
 
 3. **Run the script by executing `./backup.sh` in the terminal**.
+   ```bash
+   ./backup.conf
+   ```
 
 4. **The script will perform the backup and, if configured, sync the backup to a remote location**.
 
