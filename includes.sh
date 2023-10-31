@@ -185,8 +185,8 @@ function check_backupdir_structure()
 ########################################
 function clean_old_backups()
 {
-    $FIND $LOCALBACKUPDIR/* -type d -ctime +$RETENTION
-    $FIND $LOCALBACKUPDIR/* -type d -ctime +$RETENTION -exec rm -rf {} \;
+    $FIND $LOCALBACKUPDIR/* -type f -ctime +$RETENTION
+    $FIND $LOCALBACKUPDIR/* -type f -ctime +$RETENTION -exec rm -rf {} \;
 
     if [ $? -eq 0 ]; then
         color blue "Info: Old backup directories removed."

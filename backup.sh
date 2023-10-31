@@ -6,9 +6,8 @@
 ########################################
 
 # Load stuff
-. includes.sh
-
-source backup.conf
+source "$(dirname "${BASH_SOURCE[0]}")/includes.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/backup.conf"
 
 check_commands "${CMDS_VAR[@]}"
 check_vars
