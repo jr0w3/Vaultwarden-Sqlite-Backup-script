@@ -351,10 +351,10 @@ function smb_copy(){
     MOUNTPOINT='/tmp/vw-backup'
 
     if [ ! -d "$MOUNTPOINT" ]; then
-        sudo mkdir -p $MOUNTPOINT
+        mkdir -p $MOUNTPOINT
     fi
 
-    sudo mount -t cifs -o username=$SMB_USERNAME,password=$SMB_PASSWORD //$REMOTEHOST/$REMOTESHARE $MOUNTPOINT
+    mount -t cifs -o username=$SMB_USERNAME,password=$SMB_PASSWORD //$REMOTEHOST/$REMOTESHARE $MOUNTPOINT
 
     if [ $? -ne 0 ]; then
         color red "Error: Failed to mount SMB/CIFS share."
@@ -365,11 +365,11 @@ function smb_copy(){
     
     if [ $? -ne 0 ]; then
         color red "Error: Failed to copy data to SMB/CIFS share."
-        sudo umount $MOUNTPOINT
+        umount $MOUNTPOINT
         exit 1
     fi
     
     color green "Success: Data copied via SMB/CIFS."
     
-    sudo umount $MOUNTPOINT
+    umount $MOUNTPOINT
 }
