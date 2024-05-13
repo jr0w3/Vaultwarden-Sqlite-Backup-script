@@ -60,16 +60,43 @@ function check_commands() {
 }
 
 ########################################
-# Check vars.
+# Check package.
+# Arguments:
+#     one or more packages
+########################################
+function check_package() {
+    local missing=()
+
+    for pkg in "$@"; do
+        if ! dpkg-query -l "$pkg" &> /dev/null; then
+             missing+=("$pkg")
+        fi
+    done
+
+    if [ ${#missing[@]} -eq 0 ]; then
+        color blue "Info: All necessary packages are installed : $@"
+    else
+        color red "Error: One or more packages are missing : ${missing[*]}"
+        exit 1
+    fi
+
+}
+
+########################################
+# Check vars and stuff.
 # Arguments:
 #     no arguments
 ########################################
-function check_vars() {
+function check_vars_and_stuff() {
     check_if_required_vars_set LOCALBACKUPDIR DATADIR RETENTION
 
     if [ "$ENABLERSYNC" = "true" ]; then
         check_if_required_vars_set REMOTEHOST REMOTEUSER REMOTEPATH
         check_commands rsync
+    fi
+    if [ "$ENABLESMB" = "true" ]; then
+        check_if_required_vars_set SMB_USERNAME SMB_PASSWORD REMOTEHOST REMOTESHARE
+        check_package cifs-utils
     fi
 }
 
@@ -290,15 +317,20 @@ function remote_copy(){
     if [ "$ENABLERSYNC" = "true" ]; then
         rsync_copy
     fi 
+
+    if [ "$ENABLESMB" = "true" ]; then
+        smb_copy
+    fi
+    
 }
 
 ########################################
-# Run rsync backup
+# Run RSYNC backup
 # Arguments:
 #     no arguments 
 ########################################
 function rsync_copy(){
-    color blue "Info: Rsync..."
+    color blue "Info: Copying via Rsync..."
     rsync -a --no-o --delete --safe-links --timeout=10 "$LOCALBACKUPDIR" "$REMOTEUSER@$REMOTEHOST:$REMOTEPATH"
     ERRORLVL=$?
 
@@ -308,4 +340,36 @@ function rsync_copy(){
     fi
 }
 
+########################################
+# Run SMB/CIFS backup
+# Arguments:
+#     no arguments 
+########################################
+function smb_copy(){
+    color blue "Info: Copying via SMB/CIFS..."
 
+    MOUNTPOINT='/tmp/vw-backup'
+
+    if [ ! -d "$MOUNTPOINT" ]; then
+        sudo mkdir -p $MOUNTPOINT
+    fi
+
+    sudo mount -t cifs -o username=$SMB_USERNAME,password=$SMB_PASSWORD //$REMOTEHOST/$REMOTESHARE $MOUNTPOINT
+
+    if [ $? -ne 0 ]; then
+        color red "Error: Failed to mount SMB/CIFS share."
+        exit 1
+    fi
+    
+    cp -r "$LOCALBACKUPDIR"/* "$MOUNTPOINT"
+    
+    if [ $? -ne 0 ]; then
+        color red "Error: Failed to copy data to SMB/CIFS share."
+        sudo umount $MOUNTPOINT
+        exit 1
+    fi
+    
+    color green "Success: Data copied via SMB/CIFS."
+    
+    sudo umount $MOUNTPOINT
+}

@@ -39,6 +39,11 @@ Before using the script, you need to configure it by editing the `backup.conf` f
 - `REMOTEHOST`: The Rsync remote host.
 - `REMOTEUSER`: The Rsync remote user.
 - `REMOTEPATH`: The Rsync remote path.
+- `ENABLESMB` : Enable SMB/CIFS (true or false).
+- `REMOTEHOST` : The SMB/CIFS remote host.
+- `SMB_USERNAME` : The SMB/CIFS remote user.
+- `SMB_PASSWORD` : The SMB/CIFS remote user.
+- `REMOTESHARE` : The SMB/CIFS remote path.
 
 ## Usage
 
@@ -114,7 +119,8 @@ You should be able to log in without being asked for a password.
 
 Once SSH key authentication is set up, your Rsync command in the backup script will be able to connect to the remote host without requiring a password. This is essential for unattended, automated backups. Make sure to replace `user` and `remote_host` with your actual username and remote host information.
 
-
+## Using SMB/CIFS for Remote Backups
+You need setup `ENABLESMB` to `true` top enable SMB/CIFS backup.
 
 ## Author
 

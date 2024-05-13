@@ -10,7 +10,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/includes.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/backup.conf"
 
 check_commands "${CMDS_VAR[@]}"
-check_vars
+check_vars_and_stuff
 check_dir $DATADIR
 check_backupdir_structure
 remove_old_backups
